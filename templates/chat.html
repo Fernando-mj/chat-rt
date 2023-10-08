@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <style>
+        .chat{
+            display: flex;
+            flex-direction: column;
+        }
+        .chat span {
+            margin-bottom: 5px;
+        }
+
+        form{
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    
+    <!-- <div class="chat">
+        <span><strong>Fernando: </strong> Olá Mundo! </span>
+    </div> -->
+
+    <div>
+        <form>
+            <input type="text" placeholder="Nome:">
+            <input type="text" placeholder="Mensagem:">
+            <button type="submit">Enviar</button>
+        </form>
+    </div>
+
+
+
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.js"></script>
+
+    <script>
+
+        window.onload = function() {
+            const socket = io('http://127.0.0.1:5000');
+
+            socket.on('connect', () => {
+                socket.send('Usuario conectado ao socket')
+            })
+            
+
+            document.querySelector("form").addEventListener("submit", function(event){
+                event.preventDefault()
+
+                socket.emit('sendMessage', {nome: event.target[0].value, message: event.target[1].value})
+
+                //event.target[0].value = "" //limpar nome usuario
+                event.target[1].value = ""  //limpar texto
+
+            })
+
+            socket.on('getMessage', (msg) => {
+                const span = document.createElement("span")
+                const chat = document.querySelector(".chat")
+                span.innerHTML = `<strong>${msg.nome}:</strong>${msg.message}`
+                
+                chat.append(span)
+
+            })
+        }
+
+    </script>
+
+
+</body>
+</html>
